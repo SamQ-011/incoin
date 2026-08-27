@@ -1,0 +1,183 @@
+@import "tailwindcss";
+
+:root {
+  --incoin-navy: #1E3A5F;
+  --incoin-navy-dark: #0F1D30;
+  --incoin-navy-deep: #0B1524;
+  --incoin-forest: #2D6A4F;
+  --incoin-emerald: #10B981;
+  --incoin-gold: #D4AF37;
+  --incoin-gold-glow: rgba(212, 175, 55, 0.35);
+  --incoin-blue: #2563EB;
+  --incoin-bg: #F8FAFB;
+  --incoin-surface: #FFFFFF;
+}
+
+body {
+  background-color: var(--incoin-bg);
+  color: #1E293B;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   KEYFRAMES & ANIMATIONS (LINEAR / VERCEL STANDARD)
+   ───────────────────────────────────────────────────────────── */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.25), inset 0 0 15px rgba(16, 185, 129, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(16, 185, 129, 0.5), inset 0 0 20px rgba(16, 185, 129, 0.3);
+  }
+}
+
+@keyframes goldGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.2), inset 0 0 10px rgba(212, 175, 55, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(212, 175, 55, 0.45), inset 0 0 20px rgba(212, 175, 55, 0.25);
+  }
+}
+
+@keyframes shakeReject {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(1000%);
+  }
+}
+
+@keyframes countGlow {
+  0% {
+    opacity: 0.6;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.25);
+  }
+  100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   UTILITY CLASSES
+   ───────────────────────────────────────────────────────────── */
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in-scale {
+  animation: fadeInScale 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2.5s infinite ease-in-out;
+}
+
+.animate-gold-glow {
+  animation: goldGlow 3s infinite ease-in-out;
+}
+
+.animate-shake {
+  animation: shakeReject 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+/* Shimmer overlay on hover */
+.shimmer-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+  pointer-events: none;
+}
+
+.shimmer-container:hover::after {
+  animation: shimmer 1.2s infinite;
+}
+
+/* Stagger Delays */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.12s; }
+.stagger-3 { animation-delay: 0.19s; }
+.stagger-4 { animation-delay: 0.26s; }
+.stagger-5 { animation-delay: 0.33s; }
+.stagger-6 { animation-delay: 0.40s; }
+
+/* Custom Glass Panels */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+}
+
+.glass-dark {
+  background: rgba(15, 29, 48, 0.85);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.metal-badge {
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.25), transparent 70%),
+              linear-gradient(135deg, #1E3A5F 0%, #0F1D30 100%);
+  box-shadow: 0 10px 25px -5px rgba(15, 29, 48, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+}

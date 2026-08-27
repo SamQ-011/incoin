@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Issuer {
+  id             String       @id @default(cuid())
+  walletAddress  String       @unique
+  name           String       // ej: "Instituto Comercial Superior de la Nación - INCOS El Alto"
+  shortName      String       @default("INCOS El Alto")
+  type           String       @default("INSTITUTO_TECNICO") // INSTITUTO_TECNICO, UNIVERSIDAD, COLEGIO_PROFESIONAL, ONG, EMPRESA
+  description    String?
+  website        String?
+  logoUrl        String?      // URL o Data URI del escudo/logo oficial
+  primaryColor   String       @default("#1E3A5F") // Color de marca principal
+  secondaryColor String       @default("#D4AF37") // Color de marca secundario
+  city           String?      @default("El Alto, La Paz")
+  country        String?      @default("Bolivia")
+  txHash         String?      // Transacción on-chain que otorgó ISSUER_ROLE
+  isAuthorized   Boolean      @default(true)
+  credentials    Credential[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Student {
+  id             String       @id @default(cuid())
+  walletAddress  String       @unique
+  fullName       String       // ej: "Juan Perez Mamani"
+  email          String?
+  identityNumber String?      // ej: "8472910 LP" (CI)
+  career         String?      // ej: "Sistemas Informáticos"
+  credentials    Credential[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Credential {
+  id             String    @id @default(cuid())
+  tokenId        Int?      @unique
+  txHash         String?
+  credentialType String    // ACADEMIC_DEGREE, CERTIFICATION, DIPLOMA, INTERNSHIP, VOLUNTEERING
+  title          String    // ej: "Técnico Superior en Sistemas Informáticos"
+  description    String?
+  hours          Int?      // Horas académicas / de formación validadas (ej. 240)
+  metadataHash   String    // Hash Keccak256 de los metadatos canonizados
+  issueDate      DateTime  @default(now())
+  status         String    @default("PENDING_ONCHAIN") // PENDING_ONCHAIN, ISSUED, REVOKED
+  revokedAt      DateTime?
+  revokedReason  String?
+
+  issuerId       String
+  issuer         Issuer    @relation(fields: [issuerId], references: [id])
+
+  studentId      String
+  student        Student   @relation(fields: [studentId], references: [id])
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([metadataHash])
+  @@index([status])
+}

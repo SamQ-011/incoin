@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Hardhat
+artifacts/
+cache/
+
+# Security (CRITICAL)
+.env
+.env.local
+*.key
+*.pem
+
+# Allow example
+!.env.example
