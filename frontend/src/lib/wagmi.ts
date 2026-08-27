@@ -4,13 +4,13 @@ import { injected } from "wagmi/connectors";
 
 // Configuración universal de Wagmi para navegadores con MetaMask / Web3
 export const config = createConfig({
-  chains: [hardhat, sepolia],
+  chains: [sepolia, hardhat],
   connectors: [injected()],
   transports: {
-    [hardhat.id]: http("http://127.0.0.1:8545"),
     [sepolia.id]: http(
-      process.env.NEXT_PUBLIC_SEPOLIA_RPC_URL || "https://rpc.sepolia.org"
+      process.env.NEXT_PUBLIC_SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com"
     ),
+    [hardhat.id]: http("http://127.0.0.1:8545"),
   },
   ssr: true,
 });

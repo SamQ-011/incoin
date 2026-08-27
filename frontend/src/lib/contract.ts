@@ -1,5 +1,5 @@
 import artifact from "@/contracts/InCoinCredential.json";
-import { type Abi, type Address } from "viem";
+import { type Abi, type Address, keccak256, toHex } from "viem";
 
 export const INCOIN_CREDENTIAL_ABI = artifact.abi as Abi;
 
@@ -12,8 +12,8 @@ export const DEFAULT_CONTRACT_ADDRESS: Address =
   (process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as Address) ||
   SEPOLIA_CONTRACT_ADDRESS;
 
-export const ISSUER_ROLE_HASH =
-  "0x114e74f63c3bd19ff04632613b626884d0ab6346087532fa38b8ca801cc35e3f" as `0x${string}`; // keccak256("ISSUER_ROLE")
+// keccak256("ISSUER_ROLE") = 0x114e74f6ea3bd819998f78687bfcb11b140da08e9b7d222fa9c1f1ba1f2aa122
+export const ISSUER_ROLE_HASH = keccak256(toHex("ISSUER_ROLE")) as `0x${string}`;
 
 export const DEFAULT_ADMIN_ROLE_HASH =
   "0x0000000000000000000000000000000000000000000000000000000000000000" as `0x${string}`;

@@ -7,6 +7,7 @@ import { CredentialItem } from "@/components/IssuedTable";
 import { CredentialQRModal } from "@/components/CredentialQRModal";
 import { ConnectWallet } from "@/components/ConnectWallet";
 import { CREDENTIAL_TYPE_LABELS } from "@/lib/metadata";
+import { useInCoinContract } from "@/lib/useInCoinContract";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -38,6 +39,7 @@ interface StudentProfile {
 
 export default function StudentPortalPage() {
   const { address, isConnected } = useAccount();
+  const { isIssuer, isAdmin } = useInCoinContract();
   const router = useRouter();
 
   const [studentProfile, setStudentProfile] = useState<StudentProfile | null>(null);
@@ -178,25 +180,44 @@ export default function StudentPortalPage() {
   // ─────────────────────────────────────────────────────────────
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      {/* Issuer Notice if connected with Institutional Wallet */}
+      {isIssuer && (
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-amber-900 text-xs">
+          <div className="flex items-center gap-2.5 font-bold">
+            <Building2 className="w-5 h-5 text-amber-600 shrink-0" />
+            <span>Estás autenticado con la cuenta institucional oficial de <strong>INCOS El Alto</strong>.</span>
+          </div>
+          <Link
+            href="/issuer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#1E3A5F] hover:bg-[#152942] text-white font-extrabold rounded-lg shadow-sm transition-all cursor-pointer"
+          >
+            <span>Ir al Panel de Emisión</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      )}
+
       {/* Student Profile Banner */}
       <div className="bg-gradient-to-r from-[#1E3A5F] via-[#1A365D] to-[#0F1D30] text-white rounded-3xl p-6 sm:p-8 shadow-sm relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold backdrop-blur-sm border border-emerald-400/20">
               <GraduationCap className="w-3.5 h-3.5" />
-              Mi Portafolio Académico Verificable
+              {isIssuer ? "Entidad Emisora Oficial" : "Mi Portafolio Académico Verificable"}
             </div>
 
             <div>
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-                {studentProfile?.fullName || "Estudiante Titular"}
+                {isIssuer
+                  ? "Instituto Comercial Superior de la Nación - INCOS El Alto"
+                  : (studentProfile?.fullName || "Estudiante Titular")}
               </h1>
               <div className="flex flex-wrap items-center gap-3 text-xs text-slate-300 mt-1.5">
                 <span className="flex items-center gap-1">
                   <Building2 className="w-3.5 h-3.5 text-amber-300" />
                   Red INCOIN
                 </span>
-                {studentProfile?.identityNumber && (
+                {!isIssuer && studentProfile?.identityNumber && (
                   <>
                     <span>•</span>
                     <span className="flex items-center gap-1">
@@ -206,7 +227,7 @@ export default function StudentPortalPage() {
                   </>
                 )}
                 <span>•</span>
-                <span>Carrera / Especialidad: {studentProfile?.career || "Sistemas Informáticos"}</span>
+                <span>{isIssuer ? "Rol: Emisor Académico Autorizado" : `Carrera: ${studentProfile?.career || "Sistemas Informáticos"}`}</span>
               </div>
             </div>
 
