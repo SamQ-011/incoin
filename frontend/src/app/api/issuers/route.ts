@@ -17,7 +17,7 @@ export async function GET() {
   } catch (error) {
     console.error("Error fetching issuers:", error);
     return NextResponse.json(
-      { success: false, error: "Error al obtener instituciones emisoras" },
+      { success: false, error: error instanceof Error ? error.message : "Error al obtener instituciones emisoras" },
       { status: 500 }
     );
   }
