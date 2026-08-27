@@ -26,7 +26,7 @@ interface StudentOption {
 }
 
 export function IssueForm({ onIssuedSuccess }: { onIssuedSuccess?: () => void }) {
-  const { isConnected, address, issueCredentialOnChain } = useInCoinContract();
+  const { isConnected, address, chainId, issueCredentialOnChain } = useInCoinContract();
 
   // Form states
   const [credentialType, setCredentialType] = useState<string>("CERTIFICATION");
@@ -149,20 +149,20 @@ export function IssueForm({ onIssuedSuccess }: { onIssuedSuccess?: () => void })
       let realTokenId = 1;
       try {
         const { createPublicClient, http } = await import("viem");
-        const { hardhat } = await import("wagmi/chains");
+        const { sepolia, hardhat } = await import("wagmi/chains");
+        const isLocal = chainId === 31337;
         const publicClient = createPublicClient({
-          chain: hardhat,
-          transport: http("http://127.0.0.1:8545"),
+          chain: isLocal ? hardhat : sepolia,
+          transport: http(isLocal ? "http://127.0.0.1:8545" : (process.env.NEXT_PUBLIC_SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com")),
         });
 
         const receipt = await publicClient.waitForTransactionReceipt({
           hash: txHash,
         });
 
-        // Buscar el log de emisión o Transferencia para extraer el tokenId
+        // Buscar el log de Transfer(from, to, tokenId) para extraer el tokenId
         for (const log of receipt.logs) {
           if (log.topics && log.topics[3]) {
-            // El topic[3] en Transfer(from, to, tokenId) es el TokenId indexado
             realTokenId = Number(BigInt(log.topics[3]));
             break;
           } else if (log.topics && log.topics[1]) {
@@ -174,7 +174,7 @@ export function IssueForm({ onIssuedSuccess }: { onIssuedSuccess?: () => void })
         console.warn("Could not parse receipt logs directly, falling back:", receiptErr);
         const totalRes = await fetch("/api/credentials");
         const totalJson = await totalRes.json();
-        realTokenId = totalJson.data?.length || 1;
+        realTokenId = (totalJson.data?.length || 0) + 1;
       }
 
       await fetch(`/api/credentials/${credential.id}`, {

@@ -48,7 +48,7 @@ interface ProcessedResult {
 }
 
 export function BatchIssueForm({ onIssuedSuccess }: { onIssuedSuccess?: () => void }) {
-  const { isConnected, address, issueBatchOnChain } = useInCoinContract();
+  const { isConnected, address, chainId, issueBatchOnChain } = useInCoinContract();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 1. Datos comunes del Evento / Seminario / Curso
@@ -211,10 +211,11 @@ export function BatchIssueForm({ onIssuedSuccess }: { onIssuedSuccess?: () => vo
       let mintedTokenIds: number[] = [];
       try {
         const { createPublicClient, http } = await import("viem");
-        const { hardhat } = await import("wagmi/chains");
+        const { sepolia, hardhat } = await import("wagmi/chains");
+        const isLocal = chainId === 31337;
         const publicClient = createPublicClient({
-          chain: hardhat,
-          transport: http("http://127.0.0.1:8545"),
+          chain: isLocal ? hardhat : sepolia,
+          transport: http(isLocal ? "http://127.0.0.1:8545" : (process.env.NEXT_PUBLIC_SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com")),
         });
 
         const receipt = await publicClient.waitForTransactionReceipt({
