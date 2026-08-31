@@ -1,9 +1,26 @@
-import hre from "hardhat";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 async function main() {
+  const deploymentPath = path.join(__dirname, "..", "deployments", "sepolia.json");
+  let contractAddress = process.env.CONTRACT_ADDRESS;
+
+  if (!contractAddress && fs.existsSync(deploymentPath)) {
+    const deploymentData = JSON.parse(fs.readFileSync(deploymentPath, "utf8"));
+    contractAddress = deploymentData.contractAddress;
+  }
+
+  if (!contractAddress) {
+    contractAddress = "0xd60b490890afc529ca3bbe55059215a0636d79de";
+  }
+
   const contract = await hre.ethers.getContractAt(
     "InCoinCredential",
-    "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+    contractAddress
   );
 
   // Check total supply

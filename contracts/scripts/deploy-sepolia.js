@@ -17,7 +17,14 @@ async function main() {
   console.log("═══════════════════════════════════════════════════\n");
 
   const rpcUrl = process.env.SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com";
-  const rawKey = process.env.PRIVATE_KEY?.trim() || "0x6e55b27e7902d21e837e4a1507ac1ba237a20b95c2dc734e308a11b25ebf3424";
+  const rawKey = process.env.PRIVATE_KEY?.trim();
+  
+  if (!rawKey) {
+    console.error("❌ Error: PRIVATE_KEY no está definida en el archivo .env.");
+    console.error("   Por favor configura PRIVATE_KEY en contracts/.env antes de desplegar.");
+    process.exit(1);
+  }
+
   const formattedKey = rawKey.startsWith("0x") ? rawKey : `0x${rawKey}`;
   const account = privateKeyToAccount(formattedKey);
 

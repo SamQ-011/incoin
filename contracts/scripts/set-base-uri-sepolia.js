@@ -13,11 +13,33 @@ const __dirname = path.dirname(__filename);
 
 async function main() {
   const rpcUrl = process.env.SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com";
-  const rawKey = process.env.PRIVATE_KEY?.trim() || "0x6e55b27e7902d21e837e4a1507ac1ba237a20b95c2dc734e308a11b25ebf3424";
+  const rawKey = process.env.PRIVATE_KEY?.trim();
+
+  if (!rawKey) {
+    console.error("❌ Error: PRIVATE_KEY no está definida en el archivo .env.");
+    process.exit(1);
+  }
+
   const formattedKey = rawKey.startsWith("0x") ? rawKey : `0x${rawKey}`;
   const account = privateKeyToAccount(formattedKey);
-  const contractAddress = "0xd60b490890afc529ca3bbe55059215a0636d79de";
-  const newBaseURI = "https://incoin-one.vercel.app/api/metadata/";
+
+  // Load contract address dynamically
+  const deploymentPath = path.join(__dirname, "..", "deployments", "sepolia.json");
+  let contractAddress = process.env.CONTRACT_ADDRESS;
+
+  if (!contractAddress && fs.existsSync(deploymentPath)) {
+    const deploymentData = JSON.parse(fs.readFileSync(deploymentPath, "utf8"));
+    contractAddress = deploymentData.contractAddress;
+  }
+
+  if (!contractAddress) {
+    contractAddress = "0xd60b490890afc529ca3bbe55059215a0636d79de";
+  }
+
+  const newBaseURI =
+    process.argv[2] ||
+    process.env.BASE_URI ||
+    "https://incoin-one.vercel.app/api/metadata/";
 
   const publicClient = createPublicClient({ chain: sepolia, transport: http(rpcUrl) });
   const walletClient = createWalletClient({ account, chain: sepolia, transport: http(rpcUrl) });
