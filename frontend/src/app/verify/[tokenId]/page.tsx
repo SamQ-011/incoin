@@ -239,11 +239,10 @@ export default function PublicVerifyResultPage({
       <div className="bg-white rounded-3xl border-2 border-slate-200 shadow-xl overflow-hidden">
         {/* Verification Status Header Banner (WITH WOW PULSE GLOW) */}
         <div
-          className={`p-6 sm:p-8 text-white relative overflow-hidden transition-all duration-300 ${
-            isRevoked
+          className={`p-6 sm:p-8 text-white relative overflow-hidden transition-all duration-300 ${isRevoked
               ? "bg-gradient-to-r from-red-700 via-rose-800 to-red-950"
               : "bg-gradient-to-r from-[#0F1D30] via-[#1E3A5F] to-[#10B981] animate-pulse-glow"
-          }`}
+            }`}
         >
           {/* Background Decorative Grid */}
           <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
@@ -252,11 +251,10 @@ export default function PublicVerifyResultPage({
             <div className="space-y-2">
               <div className="flex items-center gap-2 flex-wrap">
                 <span
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-extrabold shadow-md ${
-                    isRevoked
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-extrabold shadow-md ${isRevoked
                       ? "bg-red-100 text-red-900 border border-red-200"
                       : "bg-emerald-400 text-slate-950 border border-emerald-300"
-                  }`}
+                    }`}
                 >
                   {isRevoked ? (
                     <>
